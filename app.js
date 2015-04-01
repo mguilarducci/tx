@@ -4,6 +4,7 @@ require('./config').loadModels()
 var express = require('express'),
   logger = require('morgan'),
   bodyParser = require('body-parser'),
+  helmet = require('helmet'),
   app = express(),
   chalk = require('chalk'),
   env = require('./config/env')[process.env.NODE_ENV || 'development'],
@@ -22,6 +23,10 @@ mongodb.connection.once('open', function() {
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(helmet.xssFilter());
+app.use(helmet.xframe());
+app.use(helmet.hidePoweredBy({ setTo: 'oi nenem' }));
 
 require('./oauth2')(app);
 
