@@ -65,7 +65,14 @@ var oauth2 = {
 
   getUser: function (username, password, callback) {
     OAuthUsersModel.findOne({ username: username, password: password }, function(err, user) {
-      if(err) return callback(err);
+      if(err) {
+        return callback(err);
+      }
+
+      if (!user) {
+        return callback({ err: { errors: 'hshsh ' } });
+      }
+
       callback(null, user._id);
     });
   }
