@@ -33,13 +33,10 @@ var OAuthAccessTokensModel = mongoose.model('AccessToken'),
 
 var oauth2 = {
   getAccessToken: function (bearerToken, callback) {
-    console.log('in getAccessToken (bearerToken: ' + bearerToken + ')');
-
     OAuthAccessTokensModel.findOne({ accessToken: bearerToken }, callback);
   },
 
   getClient: function (clientId, clientSecret, callback) {
-    console.log('in getClient (clientId: ' + clientId + ', clientSecret: ' + clientSecret + ')');
     if (clientSecret === null) {
       return OAuthClientsModel.findOne({ clientId: clientId }, callback);
     }
@@ -48,8 +45,6 @@ var oauth2 = {
 
 
   grantTypeAllowed: function (clientId, grantType, callback) {
-    console.log('in grantTypeAllowed (clientId: ' + clientId + ', grantType: ' + grantType + ')');
-
     if (grantType === 'password') {
       return callback(false, authorizedClientIds.indexOf(clientId) >= 0);
     }
@@ -58,8 +53,6 @@ var oauth2 = {
   },
 
   saveAccessToken: function (token, clientId, expires, userId, callback) {
-    console.log('in saveAccessToken (token: ' + token + ', clientId: ' + clientId + ', userId: ' + userId + ', expires: ' + expires + ')');
-
     var accessToken = new OAuthAccessTokensModel({
       accessToken: token,
       clientId: clientId,
@@ -71,8 +64,6 @@ var oauth2 = {
   },
 
   getUser: function (username, password, callback) {
-    console.log('in getUser (username: ' + username + ', password: ' + password + ')');
-
     OAuthUsersModel.findOne({ username: username, password: password }, function(err, user) {
       if(err) return callback(err);
       callback(null, user._id);
@@ -84,7 +75,7 @@ module.exports = function(app) {
   app.oauth = oauthserver({
     model: Object.create(oauth2),
     grants: ['password'],
-    debug: true
+    debug: false
   });
 
   app.all('/oauth/token', app.oauth.grant());

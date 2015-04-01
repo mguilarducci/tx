@@ -7,8 +7,13 @@ var DriverSchema = new Schema({
   name: { type: String, required: true },
   carPlate: { type: String, required: true },
   driverAvailable: Boolean,
-  lastLocation: { type: [Number], index: '2dsphere' }
+  lastLocation: {
+    type: { type: String, default: 'Point' },
+    coordinates: []
+  }
 });
+
+DriverSchema.index({ lastLocation: '2dsphere' });
 
 mongoose.model('Driver', DriverSchema);
 var Driver = mongoose.model('Driver');
