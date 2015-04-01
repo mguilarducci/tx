@@ -71,5 +71,20 @@ router.get('/inarea', function(req, res) {
   });
 });
 
+router.get('/:driverId/status', function(req, res) {
+  DriverModel.findById(req.params.driverId, function(err, driver) {
+    if (err || !driver) {
+      return res.status(400).send();
+    }
+
+    res.status(200).send({
+      latitude: driver.lastLocation.coordinates[1],
+      longitude: driver.lastLocation.coordinates[0],
+      driverId: driver._id,
+      driverAvailable: driver.driverAvailable
+    });
+  });
+});
+
 module.exports = router;
 

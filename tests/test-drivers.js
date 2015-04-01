@@ -189,4 +189,32 @@ describe('Drivers', function() {
         });
     });
   });
+
+  describe('get driver status', function() {
+    it('should return correct object', function(done) {
+      agent.post('/oauth/token')
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send(credentials)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) {
+            done(err);
+          }
+
+          var url = '/drivers/' + driverInArea._id + '/status?access_token=' + res.body.access_token;
+          agent.get(url)
+            .expect(200)
+            .end(function(err, res) {
+              if (err) {
+                done(err);
+              }
+              res.body.latitude.should.equal(latitude);
+              res.body.longitude.should.equal(longitude);
+              res.body.driverAvailable.should.equal(true);
+              res.body.driverId.should.equal(driverInArea.id);
+              done();
+            });
+        });
+    });
+  });
 });
