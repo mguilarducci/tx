@@ -1,12 +1,9 @@
 'use strict';
 
-var oauthserver = require('oauth2-server'),
-  mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  oauthserver = require('oauth2-server');
 
-//
-// Schemas definitions
-//
 var OAuthAccessTokensSchema = new Schema({
   accessToken: { type: String },
   clientId: { type: String },
@@ -32,7 +29,7 @@ mongoose.model('User', OAuthUsersSchema);
 var OAuthAccessTokensModel = mongoose.model('AccessToken'),
   OAuthClientsModel = mongoose.model('Client'),
   OAuthUsersModel = mongoose.model('User'),
-  authorizedClientIds = ['99taxis'];
+  authorizedClientIds = ['99taxis', 'clientId'];
 
 var oauth2 = {
   getAccessToken: function (bearerToken, callback) {
@@ -73,9 +70,6 @@ var oauth2 = {
     accessToken.save(callback);
   },
 
-  /*
-   * Required to support password grant type
-   */
   getUser: function (username, password, callback) {
     console.log('in getUser (username: ' + username + ', password: ' + password + ')');
 

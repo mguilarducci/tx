@@ -5,13 +5,9 @@ var glob = require('glob'),
 
 module.exports = {
   loadModels: function() {
-    glob('./models/*.js', function(err, files) {
-      files.forEach(function(file) {
-        console.log(path.resolve(file));
-        require(path.resolve(file));
-      });
-
-      console.log('Models loaded!');
+    var modelFiles = glob.sync('./models/*.js');
+    modelFiles.forEach(function(modelPath) {
+      require(path.resolve(modelPath));
     });
   }
 };
