@@ -8,7 +8,6 @@ var express = require('express'),
 
 router.post('/location',  function(req, res) {
   if (!req.body.driverId || !req.body.latitude || !req.body.longitude) {
-    console.log(err);
     return res.status(400).send();
   }
 
