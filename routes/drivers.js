@@ -8,12 +8,16 @@ var express = require('express'),
 
 router.post('/location',  function(req, res) {
   if (!req.body.driverId || !req.body.latitude || !req.body.longitude) {
-    return res.status(400).send();
+    return res.status(400).send({ message: 'Parametros invalidos' });
   }
 
   DriverModel.findById(req.body.driverId, function(err, driver) {
-    if (err || !driver) {
-      return res.status(400).send();
+    if (err) {
+      return res.status(400).send({ message: 'Erro ao buscar driver' });
+    }
+
+    if (!driver) {
+      return res.status(400).send({ message: 'Driver not found' });
     }
 
     driver = _.extend(driver, {
@@ -23,8 +27,7 @@ router.post('/location',  function(req, res) {
 
     driver.save(function(err) {
       if (err) {
-        console.log(err);
-        return res.status(400).send();
+        return res.status(400).send({ message: 'Erro ao salvar driver' });
       }
       res.status(201).send();
     });
@@ -33,14 +36,14 @@ router.post('/location',  function(req, res) {
 
 router.get('/inarea', function(req, res) {
   if (!req.query.sw || !req.query.ne) {
-    return res.status(400).send();
+    return res.status(400).send({ message: 'Parametros invalidos' });
   }
 
   var sw = req.query.sw.split(',').reverse().map(Number),
     ne = req.query.ne.split(',').reverse().map(Number);
 
   if (sw.length !== 2 || ne.length !== 2) {
-    return res.status(400).send();
+    return res.status(400).send({ message: 'Parametros invalidos' });
   }
 
   var where = {
@@ -54,7 +57,7 @@ router.get('/inarea', function(req, res) {
 
   DriverModel.find(where, function(err, drivers) {
     if (err) {
-      return res.status(400).send();
+      return res.status(400).send({ message: 'Erro ao buscar driver' });
     }
 
     // horroroso
@@ -73,8 +76,12 @@ router.get('/inarea', function(req, res) {
 
 router.get('/:driverId/status', function(req, res) {
   DriverModel.findById(req.params.driverId, function(err, driver) {
-    if (err || !driver) {
-      return res.status(400).send();
+    if (err) {
+      return res.status(400).send({ message: 'Erro ao buscar driver' });
+    }
+
+    if (!driver) {
+      return res.status(400).send({ message: 'Driver not found' });
     }
 
     res.status(200).send({
