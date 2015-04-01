@@ -8,6 +8,7 @@ var express = require('express'),
 
 router.post('/location',  function(req, res) {
   if (!req.body.driverId || !req.body.latitude || !req.body.longitude) {
+    console.log(err);
     return res.status(400).send();
   }
 
@@ -18,7 +19,7 @@ router.post('/location',  function(req, res) {
 
     driver = _.extend(driver, {
       driverAvailable: req.body.driverAvailable || false,
-      lastLocation: { type: 'Point', coordinates: [req.body.longitude, req.body.latitude] }
+      lastLocation: { type: 'Point', coordinates: [Number(req.body.longitude), Number(req.body.latitude)] }
     });
 
     driver.save(function(err) {
@@ -83,6 +84,20 @@ router.get('/:driverId/status', function(req, res) {
       driverId: driver._id,
       driverAvailable: driver.driverAvailable
     });
+  });
+});
+
+router.post('/', function(req, res) {
+  var driver = new DriverModel(req.body);
+  driver.lastLocation = undefined;
+
+  driver.save(function(err) {
+    if (err) {
+      console.error(err);
+      return res.status(400).send();
+    }
+
+    res.status(201).send(driver._id);
   });
 });
 

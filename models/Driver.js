@@ -8,7 +8,7 @@ var DriverSchema = new Schema({
   carPlate: { type: String, required: true },
   driverAvailable: Boolean,
   lastLocation: {
-    type: { type: String, default: 'Point' },
+    type: { type: String },
     coordinates: []
   }
 });

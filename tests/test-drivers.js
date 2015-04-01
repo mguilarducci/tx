@@ -70,6 +70,7 @@ describe('Drivers', function() {
 
           var url = '/drivers/location?access_token=' + res.body.access_token;
           agent.post(url)
+            .send({ driverId: 8 })
             .expect(400)
             .end(done);
         });
@@ -213,6 +214,70 @@ describe('Drivers', function() {
               res.body.driverAvailable.should.equal(true);
               res.body.driverId.should.equal(driverInArea.id);
               done();
+            });
+        });
+    });
+  });
+
+  describe('create driver', function() {
+    it('should create a driver', function(done) {
+      agent.post('/oauth/token')
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send(credentials)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) {
+            done(err);
+          }
+
+          var url = '/drivers?access_token=' + res.body.access_token;
+          agent.post(url)
+            .send({ name: 'Taxi driver', carPlate: 'UUU-1282' })
+            .expect(201)
+            .end(done);
+        });
+    });
+
+    it('should update a created driver', function(done) {
+      agent.post('/oauth/token')
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send(credentials)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) {
+            done(err);
+          }
+
+          var url = '/drivers?access_token=' + res.body.access_token;
+          agent.post(url)
+            .send({ name: 'Taxi driver', carPlate: 'UUU-1282' })
+            .expect(201)
+            .end(function(err, resCreate) {
+              DriverModel.findOne({ carPlate: 'UUU-1282' }, function(err, driverCreated) {
+
+                url = '/drivers/location?access_token=' + res.body.access_token;
+                agent.post(url)
+                  .send({
+                    latitude: latitude,
+                    longitude: longitude,
+                    driverId: driverCreated._id,
+                    driverAvailable: true
+                  })
+                  .expect(201)
+                  .end(function(err, res) {
+                    if (err) {
+                      done(err);
+                    }
+
+                    DriverModel.findById(driverCreated._id, function(err, driverUpdated) {
+                      driverUpdated.lastLocation.coordinates[0].should.equal(longitude);
+                      driverUpdated.lastLocation.coordinates[1].should.equal(latitude);
+                      driverUpdated.driverAvailable.should.equal(true);
+
+                      done();
+                    });
+                  });
+              });
             });
         });
     });
