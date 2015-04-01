@@ -25,6 +25,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 require('./oauth2')(app);
 
+app.get('/', function(req, res) {
+  res.status(200).send({ ok: 'ok' });
+});
+
 app.use('/drivers', app.oauth.authorise(), require('./routes/drivers'));
 
 module.exports = app;
