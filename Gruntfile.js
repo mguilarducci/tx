@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
     files: {
       js: ['**/*.js'],
-      serverFile: ['Gruntfile.js', 'index.js', 'oauth2/**', 'tests/**', 'models/**', 'config/**', 'routes/** ']
+      serverFile: ['Gruntfile.js', 'app.js', 'oauth2/**', 'tests/**', 'models/**', 'config/**', 'routes/** ']
     },
 
     jshint: {

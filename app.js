@@ -1,5 +1,5 @@
 'use strict';
-require('./config').loadModels()
+require('./config').loadModels();
 
 var express = require('express'),
   logger = require('morgan'),
